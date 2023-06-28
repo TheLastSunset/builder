@@ -1,18 +1,49 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>org.jetbrains.plugins.template</id>
-    <name>IntelliJ Platform Plugin Template</name>
-    <vendor>JetBrains</vendor>
+    <version>0.1.0</version>
+    <change-notes>&lt;h3&gt;Added&#xD;&lt;/h3&gt;
+        &lt;ul&gt;&lt;li&gt;&lt;code&gt;settings.gradle.kts&lt;/code&gt; for the &lt;a
+        href="https://docs.gradle.org/current/userguide/organizing_gradle_projects.html#always_define_a_settings_file"&gt;performance
+        purposes&lt;/a&gt;&#xD;&#xD;&#xD;&lt;/li&gt;&lt;li&gt;&lt;code&gt;#REMOVE-ON-CLEANUP#&lt;/code&gt; token to mark
+        content to be removed with &lt;strong&gt;Template Cleanup&lt;/strong&gt; workflow&#xD;
+        &#xD;&#xD;
+        &#xD;&#xD;
+        &#xD;&lt;/li&gt;&lt;/ul&gt;
+        &lt;h3&gt;Changed&#xD;&lt;/h3&gt;
+        &lt;ul&gt;&lt;li&gt;README proofreading&#xD;&#xD;&#xD;&lt;/li&gt;&lt;li&gt;GitHub Actions - Update IDE versions
+        for the Plugin Verifier&#xD;&#xD;&#xD;&lt;/li&gt;&lt;li&gt;Update platformVersion to &lt;code&gt;2020.1.2&lt;/code&gt;&#xD;
+        &#xD;&#xD;
+        &#xD;
+        [0.1.0]: &lt;a href="https://github.com/TheLastSunset/builder/compare/v1.7.0...v0.1.0"&gt;https://github.com/TheLastSunset/builder/compare/v1.7.0...v0.1.0&lt;/a&gt;&#xD;&lt;/li&gt;&lt;/ul&gt;
+    </change-notes>
+    <!--    <description>Generate a inner builder like lombok</description>-->
+    <idea-version since-build="222.3345.118" until-build="232.*"/>
+
+    <id>com.github.thelastsunset</id>
+    <name>Inner-Builder-Like-Lombok</name>
+    <vendor>thelastsunset</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="org.jetbrains.plugins.template.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-    </extensions>
+<!--    <extensions defaultExtensionNs="com.intellij">-->
+<!--        <toolWindow factoryClass="org.jetbrains.plugins.innerbuilder.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>-->
+<!--    </extensions>-->
 
-    <applicationListeners>
-        <listener class="org.jetbrains.plugins.template.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
+<!--    <applicationListeners>-->
+<!--        <listener class="org.jetbrains.plugins.innerbuilder.listeners.MyApplicationActivationListener"-->
+<!--                  topic="com.intellij.openapi.application.ApplicationActivationListener"/>-->
+<!--    </applicationListeners>-->
+
+    <actions>
+        <action id="InnerBuilder.generate"
+                class="org.jetbrains.plugins.innerbuilder.InnerBuilderAction"
+                text="Builder..." description="${project.description}">
+            <add-to-group group-id="GenerateGroup" anchor="after" relative-to-action="JavaGenerateGroup2"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift alt B"/>
+        </action>
+    </actions>
 </idea-plugin>
