@@ -13,9 +13,9 @@ import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
 import java.util.*
 
-class InnerBuilderGenerator private constructor(
+class InnerBuilderGenerator(
     private val project: Project, private val file: PsiFile, private val editor: Editor,
-    private val selectedFields: List<PsiFieldMember?>
+    private val selectedFields: List<PsiFieldMember>
 ) : Runnable {
     private val psiElementFactory: PsiElementFactory = JavaPsiFacade.getInstance(project).elementFactory
 
@@ -26,12 +26,12 @@ class InnerBuilderGenerator private constructor(
         val builderType = psiElementFactory.createTypeFromText(BUILDER_CLASS_NAME, null)
         val constructor = generateConstructor(targetClass, builderType)
         addMethod(targetClass, null, constructor, true)
-        val finalFields: MutableCollection<PsiFieldMember?> = ArrayList()
-        val nonFinalFields: MutableCollection<PsiFieldMember?> = ArrayList()
+        val finalFields: MutableCollection<PsiFieldMember> = ArrayList()
+        val nonFinalFields: MutableCollection<PsiFieldMember> = ArrayList()
         var lastAddedField: PsiElement? = null
         for (fieldMember in selectedFields) {
             lastAddedField = findOrCreateField(builderClass, fieldMember, lastAddedField)
-            if (fieldMember!!.element.hasModifierProperty(PsiModifier.FINAL)
+            if (fieldMember.element.hasModifierProperty(PsiModifier.FINAL)
                 && !options.contains(InnerBuilderOption.FINAL_SETTERS)
             ) {
                 finalFields.add(fieldMember)
@@ -102,7 +102,7 @@ class InnerBuilderGenerator private constructor(
         if (copyBuilderBody != null) {
             val copyBuilderParameters = StringBuilder()
             for (fieldMember in selectedFields) {
-                if (fieldMember!!.element.hasModifierProperty(PsiModifier.FINAL)
+                if (fieldMember.element.hasModifierProperty(PsiModifier.FINAL)
                     && !options.contains(InnerBuilderOption.FINAL_SETTERS)
                 ) {
                     if (copyBuilderParameters.isNotEmpty()) {
@@ -311,7 +311,7 @@ class InnerBuilderGenerator private constructor(
         val constructorBody = constructor.body
         if (constructorBody != null) {
             for (member in selectedFields) {
-                val field = member!!.element
+                val field = member.element
                 val setterPrototype = PropertyUtil.generateSetterPrototype(field)
                 val setter = targetClass.findMethodBySignature(setterPrototype, true)
                 val fieldName = field.name
@@ -480,7 +480,7 @@ class InnerBuilderGenerator private constructor(
         private const val BUILDER_METHOD_NAME: @NonNls String = "builder"
         fun generate(
             project: Project, editor: Editor, file: PsiFile,
-            selectedFields: List<PsiFieldMember?>
+            selectedFields: List<PsiFieldMember>
         ) {
             val builderGenerator: Runnable = InnerBuilderGenerator(project, file, editor, selectedFields)
             ApplicationManager.getApplication().runWriteAction(builderGenerator)

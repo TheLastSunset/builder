@@ -7,6 +7,19 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.TypeConversionUtil
 
 object InnerBuilderCollector {
+    private val logClassList = listOf(
+        "org.apache.log4j.Logger",
+        "org.apache.logging.log4j.Logger",
+        "java.util.logging.Logger",
+        "org.slf4j.Logger",
+        "ch.qos.logback.classic.Logger",
+        "net.sf.microlog.core.Logger",
+        "org.apache.commons.logging.Log",
+        "org.pmw.tinylog.Logger",
+        "org.jboss.logging.Logger",
+        "jodd.log.Logger"
+    )
+
     fun collectFields(file: PsiFile, editor: Editor): List<PsiFieldMember>? {
         val offset = editor.caretModel.offset
         val element = file.findElementAt(offset) ?: return null
@@ -28,7 +41,8 @@ object InnerBuilderCollector {
     }
 
     private fun collectFieldsInClass(
-        element: PsiElement, accessObjectClass: PsiClass,
+        element: PsiElement,
+        accessObjectClass: PsiClass,
         clazz: PsiClass
     ): List<PsiFieldMember> {
         val classFieldMembers: MutableList<PsiFieldMember> = ArrayList()
@@ -51,8 +65,7 @@ object InnerBuilderCollector {
                 }
 
                 // skip eventual logging fields
-                val fieldType = field.type.canonicalText
-                if ("org.apache.log4j.Logger" == fieldType || "org.apache.logging.log4j.Logger" == fieldType || "java.util.logging.Logger" == fieldType || "org.slf4j.Logger" == fieldType || "ch.qos.logback.classic.Logger" == fieldType || "net.sf.microlog.core.Logger" == fieldType || "org.apache.commons.logging.Log" == fieldType || "org.pmw.tinylog.Logger" == fieldType || "org.jboss.logging.Logger" == fieldType || "jodd.log.Logger" == fieldType) {
+                if (logClassList.contains(field.type.canonicalText)) {
                     continue
                 }
                 if (field.hasModifierProperty(PsiModifier.FINAL)) {

@@ -44,8 +44,7 @@ class InnerBuilderHandler : LanguageCodeInsightActionHandler {
 
     companion object {
         private fun isApplicable(file: PsiFile, editor: Editor): Boolean {
-            val targetElements = InnerBuilderCollector.collectFields(file, editor)
-            return !targetElements.isNullOrEmpty()
+            return !InnerBuilderCollector.collectFields(file, editor).isNullOrEmpty()
         }
     }
 }

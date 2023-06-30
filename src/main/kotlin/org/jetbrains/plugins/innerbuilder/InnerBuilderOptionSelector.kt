@@ -16,6 +16,7 @@ import javax.swing.JComponent
 object InnerBuilderOptionSelector {
     private val RENDERER = DropdownListCellRenderer()
     private val OPTIONS = createGeneratorOptions()
+
     private fun createGeneratorOptions(): List<SelectorOption> {
         val options: MutableList<SelectorOption> = ArrayList()
         options.add(
@@ -133,9 +134,9 @@ object InnerBuilderOptionSelector {
     }
 
     fun selectFieldsAndOptions(
-        members: List<PsiFieldMember?>?,
+        members: List<PsiFieldMember>?,
         project: Project?
-    ): List<PsiFieldMember?>? {
+    ): List<PsiFieldMember>? {
         if (members.isNullOrEmpty()) {
             return null
         }
@@ -143,7 +144,7 @@ object InnerBuilderOptionSelector {
             return members
         }
         val optionCheckBoxes = buildOptions()
-        val memberArray = members.toTypedArray<PsiFieldMember?>()
+        val memberArray = members.toTypedArray<PsiFieldMember>()
         val chooser = MemberChooser(
             memberArray,
             false,  // allowEmptySelection
@@ -157,10 +158,10 @@ object InnerBuilderOptionSelector {
         } else null
     }
 
-    private fun buildOptions(): Array<JComponent?> {
+    private fun buildOptions(): Array<JComponent> {
         val propertiesComponent = PropertiesComponent.getInstance()
         val optionCount = OPTIONS.size
-        val checkBoxesArray = arrayOfNulls<JComponent>(optionCount)
+        val checkBoxesArray = arrayOf<JComponent>()
         for (i in 0 until optionCount) {
             checkBoxesArray[i] = buildOptions(propertiesComponent, OPTIONS[i])
         }
@@ -188,7 +189,7 @@ object InnerBuilderOptionSelector {
         optionCheckBox.toolTipText = selectorOption.toolTip
         val optionProperty = selectorOption.option.property
         optionCheckBox.isSelected = propertiesComponent.isTrueValue(optionProperty)
-        optionCheckBox.addItemListener { _: ItemEvent? ->
+        optionCheckBox.addItemListener { _: ItemEvent ->
             propertiesComponent.setValue(
                 optionProperty, optionCheckBox.isSelected.toString()
             )
@@ -203,7 +204,7 @@ object InnerBuilderOptionSelector {
         val comboBox: ComboBox<DropdownSelectorOptionValue> = ComboBox<DropdownSelectorOptionValue>()
         comboBox.isEditable = false
         comboBox.renderer = RENDERER
-        selectorOption.values.forEach(Consumer { item: DropdownSelectorOptionValue? -> comboBox.addItem(item) })
+        selectorOption.values.forEach(Consumer { item: DropdownSelectorOptionValue -> comboBox.addItem(item) })
         comboBox.selectedItem = setSelectedComboBoxItem(propertiesComponent, selectorOption)
         comboBox.addItemListener { event: ItemEvent ->
             setPropertiesComponentValue(
@@ -233,8 +234,9 @@ object InnerBuilderOptionSelector {
         val selectedValue = propertiesComponent.getValue(selectorOption.option.property)
         return selectorOption.values
             .stream()
-            .filter { it: DropdownSelectorOptionValue? -> it?.option?.property == selectedValue }
+            .filter { it: DropdownSelectorOptionValue -> it.option?.property == selectedValue }
             .findFirst()
             .orElse(selectorOption.values[0])
     }
+
 }

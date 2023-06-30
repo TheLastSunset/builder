@@ -1,4 +1,4 @@
-# IntelliJ Platform Plugin Template
+# Generate a inner builder like lombok
 
 <!-- Plugin description -->
 Generate a inner builder like lombok
