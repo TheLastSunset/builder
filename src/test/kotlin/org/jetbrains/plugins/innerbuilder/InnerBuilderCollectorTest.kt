@@ -1,18 +1,18 @@
 package org.jetbrains.plugins.innerbuilder
 
+import com.intellij.codeInsight.generation.PsiFieldMember
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.testFramework.TestDataPath
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import junit.framework.TestCase
 
-@TestDataPath("\$CONTENT_ROOT/src/test/testData")
 class InnerBuilderCollectorTest : BasePlatformTestCase() {
 
-    fun testCollectFieldsIsNull() {
+    fun testCollectFieldsIsNullOrEmpty() {
         val file = myFixture.configureByText(
             JavaFileType.INSTANCE,
             """
-            package org.jetbrains.plugins.innerbuilder;
-            public class MyPlugin {
+            public class TestClass {
 
             }
         """.trimIndent()
@@ -20,7 +20,29 @@ class InnerBuilderCollectorTest : BasePlatformTestCase() {
         val editor = myFixture.editor
 
         val fields = InnerBuilderCollector.collectFields(file, editor)
-        assertNull("fields should be null", fields)
+        assertNullOrEmpty(fields)
     }
 
+    fun testCollectFieldsIsNotEmpty() {
+        val file = myFixture.configureByText(
+            JavaFileType.INSTANCE,
+            """
+            public class TestClass {
+                private String name;
+                public String getName() {
+                    return name;
+                }
+                public void setName(String name) {
+                    this.name = name;
+                }
+            }
+        """.trimIndent()
+        )
+        val editor = myFixture.editor
+
+        val fields = InnerBuilderCollector.collectFields(file, editor)
+        assertNotNull("fields should be not null", fields)
+        UsefulTestCase.assertSize(1, fields as Collection<PsiFieldMember>)
+        TestCase.assertEquals("name", fields[0].element.name)
+    }
 }
